@@ -314,22 +314,16 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
     // 2️⃣ Prepare full order object (Items + Notes/Extras)
     const fullOrder = {
       ...order,
-
-      // ✅ Fix items read
       items: Array.isArray(order.items)
         ? order.items
         : safeJSONParse(order.items, []),
-
-      // ✅ Fix notes/extras read
       notes: Array.isArray(order.notes)
         ? order.notes
         : Array.isArray(order.extralist)
           ? order.extralist
           : safeJSONParse(order.notes, []),
-
-       finalTotal:
-        order.grand_total ||
-        ((order.total || 0) + (order.gst_total || 0)),
+      finalTotal:
+        order.grand_total || (order.total || 0) + (order.gst_total || 0),
     };
 
     console.log("✅ Notes for invoice:", fullOrder.notes);
@@ -337,23 +331,29 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
     // 3️⃣ Create invoice HTML
     const invoiceHTML = generateInvoiceHTML(fullOrder);
 
-
-    // 5️⃣ Generate PDF via Puppeteer
+    // 4️⃣ Launch Puppeteer safely for Render
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"], // for server safety
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH ||
+        (await puppeteer.executablePath()), // ✅ ensures correct path on Render
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
+
     const page = await browser.newPage();
     await page.setContent(invoiceHTML, { waitUntil: "networkidle0" });
+
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
       margin: { top: "20px", bottom: "20px" },
     });
+
     await browser.close();
 
-    // 6️⃣ Upload PDF to Supabase Storage
+    // 5️⃣ Upload PDF to Supabase Storage
     const fileName = `invoice_${orderId}_${Date.now()}.pdf`;
+
     const { error: uploadError } = await supabase.storage
       .from("invoices")
       .upload(fileName, pdfBuffer, {
@@ -364,19 +364,16 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
     if (uploadError)
       return res.status(500).json({ error: uploadError.message });
 
-    // 7️⃣ Get public URL of uploaded PDF
+    // 6️⃣ Get public URL
     const { data: publicData } = supabase.storage
       .from("invoices")
       .getPublicUrl(fileName);
 
     console.log("✅ Invoice generated:", publicData.publicUrl);
 
-    // 8️⃣ Send the link as response
     res.json({ publicUrl: publicData.publicUrl });
   } catch (err) {
     console.error("❌ sendInvoiceToWhatsApp error:", err);
-    res.status(500).json({ error: "Internal server error" });
-
-
+    res.status(500).json({ error: err.message || "Internal server error" });
   }
 };
