@@ -1,159 +1,137 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CardBasic from "../components/CardBasic/CardBasic";
 import Card from "../components/Card/Card";
-import { CiCalendar } from "react-icons/ci";
 import { MdCurrencyRupee } from "react-icons/md";
 import { GoPeople } from "react-icons/go";
 import { LuBox } from "react-icons/lu";
 import { IoFastFoodOutline } from "react-icons/io5";
-import RecentActivity from "../components/RecentActivity/RecentActivity";
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer
-} from "recharts";
-// import "bootstrap/dist/css/bootstrap.min.css";
+import toast from "react-hot-toast";
+import { getStaff } from "../service/staffApi";
 
-const data = [
-    {
-        name: "Jan",
-        revenue: 45000,
-        expenses: 30000,
-        profit: 15000
-    }, {
-        name: "Feb",
-        revenue: 52000,
-        expenses: 35000,
-        profit: 17000
-    }, {
-        name: "Mar",
-        revenue: 38000,
-        expenses: 22000,
-        profit: 16000
-    }, {
-        name: "Apr",
-        revenue: 40000,
-        expenses: 25000,
-        profit: 15000
-    }, {
-        name: "May",
-        revenue: 57000,
-        expenses: 20000,
-        profit: 37000
-    }, {
-        name: "Jun",
-        revenue: 68000,
-        expenses: 40000,
-        profit: 28000
-    }, {
-        name: "July",
-        revenue: 74800,
-        expenses: 50400,
-        profit: 78000
-    }, {
-        name: "Aug",
-        revenue: 76400,
-        expenses: 57800,
-        profit: 87600
-    }, {
-        name: "Sep",
-        revenue: 76450,
-        expenses: 43940,
-        profit: 17600
-    }, {
-        name: "Oct",
-        revenue: 38760,
-        expenses: 40000,
-        profit: 68750
-    }, {
-        name: "Nov",
-        revenue: 37540,
-        expenses: 20000,
-        profit: 58643
-    }, {
-        name: "Dec",
-        revenue: 98650,
-        expenses: 87600,
-        profit: 75640
-    }
-];
+const API_STOCKS =
+  "https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/restaurant-stocks";
+const API_ORDERS =
+  "https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/kitchen";
 
 const Dashboard = () => {
-    return (
-        <div className="overviewContainer container">
-            <div className="py-4">
-                <h2 className="fs-4 fw-500">Quick Actions</h2>
-                <div className="row g-3 justify-content-center pb-4">
-                    <CardBasic
-                        cardTitle={"New Order"}
-                        cardText={" Make a new order"}
-                        cardColor={"#B7E4C7"}
-                        navigateTo="/takeorders" />
-                    <CardBasic
-                        cardTitle={"Menu"}
-                        cardText={"view full menu"}
-                        cardColor={"#A3CCDA"}
-                        navigateTo="/takeorders" />
-                    <CardBasic
-                        cardTitle={"Stock update"}
-                        cardText={"Update inventory levels"}
-                        cardColor={"#FFF3B0"}
-                        navigateTo="/stocks" />
+  const [totalStaff, setTotalStaff] = useState(0);
+  const [lowStockCount, setLowStockCount] = useState(0);
+  const [completedOrders, setCompletedOrders] = useState(0);
 
-                </div>
+  // ✅ Fetch Staff Count
+  const fetchStaffCount = async () => {
+    try {
+      const data = await getStaff();
+      setTotalStaff(data.length);
+    } catch (err) {
+      toast.error(`Failed to load staff: ${err.message}`);
+    }
+  };
 
-                <div className="row  g-3 justify-content-center pb-4">
-                    <h2 className="fs-4 fw-500">Overview</h2>
-                    <Card
-                        cardTitle={"Total Orders"}
-                        cardIcon={<IoFastFoodOutline fontSize={
-                            20
-                        }
-                            color="#000000" />}
-                        cardSubtitle={"24"}
-                        cardTextNum={"+12%"}
-                        cardText={" from last month"} />
-                    <Card
-                        cardTitle={"Monthly Revenue"}
-                        cardIcon={< MdCurrencyRupee fontSize={
-                            20
-                        }
-                            color="#000000" />}
-                        cardSubtitle={"Rs. 45,231"}
-                        cardTextNum={"+8.2%"}
-                        cardText={" from last month"} />
-                    <Card
-                        cardTitle={"Total Staff"}
-                        cardIcon={< GoPeople fontSize={
-                            20
-                        }
-                            color="#000000" />}
-                        cardSubtitle={"12"}
-                        cardTextNum={"+2%"}
-                        cardText={" from last month"} />
-                    <Card
-                        cardTitle={"Stock Status"}
-                        cardIcon={< LuBox fontSize={
-                            20
-                        }
-                            color="#000000" />}
-                        cardSubtitle={"89%"}
-                        cardTextNum={"-3%"}
-                        cardText={" from last month"}
-                        cardLoss={true} />
-                </div>
-                <div className="py-4">
-                    <h2 className="fs-4 fw-500">Recent Activity</h2>
-                    <RecentActivity />
-                </div>
-            </div>
+  // ✅ Fetch Low Stock Data
+  const fetchStockData = async () => {
+    try {
+      const res = await fetch(`${API_STOCKS}/all`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch stocks");
+
+      const lowStocks = data.filter((item) => item.remaining_stock < 10).length;
+      setLowStockCount(lowStocks);
+    } catch (err) {
+      toast.error(`Failed to load stock data: ${err.message}`);
+    }
+  };
+
+  // ✅ Fetch Completed Orders Count
+  const fetchCompletedOrders = async () => {
+    try {
+      const res = await fetch(API_ORDERS);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch orders");
+
+      const completed = data.filter(
+        (order) => order.status?.toLowerCase() === "completed"
+      ).length;
+
+      setCompletedOrders(completed);
+    } catch (err) {
+      toast.error(`Failed to load orders: ${err.message}`);
+    }
+  };
+
+  useEffect(() => {
+    fetchStaffCount();
+    fetchStockData();
+    fetchCompletedOrders();
+  }, []);
+
+  return (
+    <div className="overviewContainer container">
+      <div className="py-4">
+        <h2 className="fs-4 fw-500">Quick Actions</h2>
+        <div className="row g-3 justify-content-center pb-4">
+          <CardBasic
+            cardTitle={"New Order"}
+            cardText={"Make a new order"}
+            cardColor={"#B7E4C7"}
+            navigateTo="/takeorders"
+          />
+          <CardBasic
+            cardTitle={"Menu"}
+            cardText={"View full menu"}
+            cardColor={"#A3CCDA"}
+            navigateTo="/takeorders"
+          />
+          <CardBasic
+            cardTitle={"Stock update"}
+            cardText={"Update inventory levels"}
+            cardColor={"#FFF3B0"}
+            navigateTo="/stocks"
+          />
         </div>
-    );
+
+        <div className="row g-3 justify-content-center pb-4">
+          <h2 className="fs-4 fw-500">Overview</h2>
+
+          {/* ✅ Dynamic Total Orders (Completed Orders) */}
+          <Card
+            cardTitle={"Total Orders"}
+            cardIcon={<IoFastFoodOutline fontSize={20} color="#000000" />}
+            cardSubtitle={completedOrders}
+          />
+
+          <Card
+            cardTitle={"Monthly Revenue"}
+            cardIcon={<MdCurrencyRupee fontSize={20} color="#000000" />}
+            cardSubtitle={"Rs. 45,231"}
+          />
+
+          {/* ✅ Dynamic Total Staff */}
+          <Card
+            cardTitle={"Total Staff"}
+            cardIcon={<GoPeople fontSize={20} color="#000000" />}
+            cardSubtitle={totalStaff}
+          />
+
+          {/* ✅ Dynamic Low Stock Alerts with Color Change */}
+          <Card
+            cardTitle={"Low Stock Alerts"}
+            cardIcon={<LuBox fontSize={20} color="#000000" />}
+            cardSubtitle={
+              <span
+                style={{
+                  color: lowStockCount > 0 ? "red" : "black",
+                  fontWeight: 500,
+                }}
+              >
+                {lowStockCount}
+              </span>
+            }
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;

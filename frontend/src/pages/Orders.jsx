@@ -17,7 +17,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/orders/completed");
+        const res = await fetch("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/completed");
         const data = await res.json();
         setOrders(data || []);
       } catch (err) {

@@ -97,7 +97,7 @@ const Finance = () => {
   // ✅ Fetch summary
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/finance-summary")
+      .get("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/finance-summary")
       .then((res) => {
         if (res.data) {
           setTotalRevenue(res.data.totalRevenue || 0);
@@ -112,7 +112,7 @@ const Finance = () => {
   // ✅ Fetch Revenue & Expenses Totals for Cards (runs once on page load)
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/revenue")
+      .get("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/revenue")
       .then((res) => {
         if (res.data?.values) {
           const sumRevenue = res.data.values.reduce((acc, val) => acc + val, 0);
@@ -122,7 +122,7 @@ const Finance = () => {
       .catch(() => console.log("Backend not ready for revenue"));
 
     axios
-      .get("http://localhost:4000/api/expenses")
+      .get("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/expenses")
       .then((res) => {
         if (res.data?.values) {
           const sumExpenses = res.data.values.reduce((acc, val) => acc + val, 0);
@@ -143,7 +143,7 @@ const Finance = () => {
   useEffect(() => {
     if (activeTab === "revenue") {
       axios
-        .get("http://localhost:4000/api/revenue")
+        .get("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/revenue")
         .then((res) => {
           if (res.data?.values && res.data?.months) {
             setRevenue(res.data.values);
@@ -158,7 +158,7 @@ const Finance = () => {
   useEffect(() => {
     if (activeTab === "expenses") {
       axios
-        .get("http://localhost:4000/api/expenses")
+        .get("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/expenses")
         .then((res) => {
           if (res.data?.values && res.data?.months) {
             setExpenses(res.data.values);
@@ -424,7 +424,7 @@ export default Finance;
 
 //   const fetchCartOrders = async () => {
 //     try {
-//       const res = await fetch("http://localhost:4000/api/orders/cart");
+//       const res = await fetch("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/cart");
 //       const data = await res.json();
 //       setOrders(Array.isArray(data) ? data : []);
 //     } catch (err) {
@@ -463,7 +463,7 @@ export default Finance;
 //   const handleConfirmOrder = async (order) => {
 //     const notes = tableNotes[order.id] || [];
 //     try {
-//       const res = await fetch(`http://localhost:4000/api/orders/confirm/${order.id}`, {
+//       const res = await fetch(`https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/confirm/${order.id}`, {
 //         method: "PATCH",
 //         headers: { "Content-Type": "application/json" },
 //         body: JSON.stringify({ notes }),
@@ -489,7 +489,7 @@ export default Finance;
 
 //     try {
 //       const res = await fetch(
-//         `http://localhost:4000/api/orders/complete/${selectedOrder.id}`,
+//         `https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/complete/${selectedOrder.id}`,
 //         {
 //           method: "PATCH",
 //           headers: { "Content-Type": "application/json" },

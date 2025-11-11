@@ -89,7 +89,7 @@ const TakeOrders = () => {
   // Send order to backend
   const sendOrderToBackend = async (tableOrder) => {
     try {
-      const response = await fetch("http://localhost:4000/api/orders/place", {
+      const response = await fetch("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/place", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
