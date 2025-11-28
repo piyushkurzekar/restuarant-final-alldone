@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:4000/staff"; // ✅ match backend route
+const API_URL = "https://restuarant-final-alldone.onrender.com/staff"; // ✅ match backend route
 
 export const getStaff = async () => {
     const res = await fetch(API_URL);

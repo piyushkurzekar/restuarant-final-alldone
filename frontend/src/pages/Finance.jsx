@@ -69,8 +69,8 @@ const Finance = () => {
       const { startDate, endDate } = getDateRange();
 
       const [ordersRes, stockRes] = await Promise.all([
-        axios.get("http://localhost:4000/api/orders/completed"),
-        axios.get("http://localhost:4000/api/restaurant-stocks/all"),
+        axios.get("https://restuarant-final-alldone.onrender.com/api/orders/completed"),
+        axios.get("https://restuarant-final-alldone.onrender.com/api/restaurant-stocks/all"),
       ]);
 
       let ordersData = ordersRes.data || [];

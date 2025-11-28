@@ -9,8 +9,8 @@ import toast from "react-hot-toast";
 import { getStaff } from "../service/staffApi";
 import { useNavigate } from "react-router-dom";   // ✅ added
 
-const API_STOCKS = "http://localhost:4000/api/restaurant-stocks";
-const API_ORDERS = "http://localhost:4000/api/orders/kitchen";
+const API_STOCKS = "https://restuarant-final-alldone.onrender.com/api/restaurant-stocks";
+const API_ORDERS = "https://restuarant-final-alldone.onrender.com/api/orders/kitchen";
 
 const Dashboard = () => {
   const navigate = useNavigate(); // ✅ initialize navigation

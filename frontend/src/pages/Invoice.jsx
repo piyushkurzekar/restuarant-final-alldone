@@ -20,7 +20,7 @@ const Invoice = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/orders/${orderId}`);
+        const res = await fetch(`https://restuarant-final-alldone.onrender.com/api/orders/${orderId}`);
         const data = await res.json();
         setOrder(data);
       } catch (err) {
@@ -67,7 +67,7 @@ const Invoice = () => {
 
       // 1️⃣ Generate invoice PDF via backend
       const res = await fetch(
-        `http://localhost:4000/api/orders/send-invoice/${order.id}`,
+        `https://restuarant-final-alldone.onrender.com/api/orders/send-invoice/${order.id}`,
         { method: "POST" }
       );
       const data = await res.json();

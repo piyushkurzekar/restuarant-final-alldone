@@ -7,7 +7,7 @@ import InventoryTable from "../components/InventoryTable/InventoryTable";
 
 
 
-const API_URL = "http://localhost:4000/api/restaurant-stocks";
+const API_URL = "https://restuarant-final-alldone.onrender.com/api/restaurant-stocks";
 
 const Stocks = () => {
 
