@@ -1,5 +1,8 @@
 import { supabase } from "../config/supabaseClient.js";
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+// import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+
 import { generateInvoiceHTML } from "../templates/generateInvoiceHTML.js";
 
 // -------------------- ORDERS --------------------
@@ -314,16 +317,22 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
     // 2️⃣ Prepare full order object (Items + Notes/Extras)
     const fullOrder = {
       ...order,
+
+      // ✅ Fix items read
       items: Array.isArray(order.items)
         ? order.items
         : safeJSONParse(order.items, []),
+
+      // ✅ Fix notes/extras read
       notes: Array.isArray(order.notes)
         ? order.notes
         : Array.isArray(order.extralist)
           ? order.extralist
           : safeJSONParse(order.notes, []),
+
       finalTotal:
-        order.grand_total || (order.total || 0) + (order.gst_total || 0),
+        order.grand_total ||
+        ((order.total || 0) + (order.gst_total || 0)),
     };
 
     console.log("✅ Notes for invoice:", fullOrder.notes);
@@ -331,14 +340,26 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
     // 3️⃣ Create invoice HTML
     const invoiceHTML = generateInvoiceHTML(fullOrder);
 
-    // 4️⃣ Launch Puppeteer safely for Render
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath:
-        process.env.PUPPETEER_EXECUTABLE_PATH ||
-        (await puppeteer.executablePath()), // ✅ ensures correct path on Render
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    // 5️⃣ Generate PDF via Puppeteer
+
+    let browser;
+
+    if (process.env.RENDER) {
+      // Render (Linux server)
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    } else {
+      // Local machine (Windows)
+      browser = await puppeteer.launch({
+        headless: true,
+        executablePath: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+        args: ["--no-sandbox"],
+      });
+    }
 
     const page = await browser.newPage();
     await page.setContent(invoiceHTML, { waitUntil: "networkidle0" });
@@ -351,9 +372,10 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
 
     await browser.close();
 
-    // 5️⃣ Upload PDF to Supabase Storage
-    const fileName = `invoice_${orderId}_${Date.now()}.pdf`;
 
+
+    // 6️⃣ Upload PDF to Supabase Storage
+    const fileName = `invoice_${orderId}_${Date.now()}.pdf`;
     const { error: uploadError } = await supabase.storage
       .from("invoices")
       .upload(fileName, pdfBuffer, {
@@ -364,16 +386,19 @@ export const sendInvoiceToWhatsApp = async (req, res) => {
     if (uploadError)
       return res.status(500).json({ error: uploadError.message });
 
-    // 6️⃣ Get public URL
+    // 7️⃣ Get public URL of uploaded PDF
     const { data: publicData } = supabase.storage
       .from("invoices")
       .getPublicUrl(fileName);
 
     console.log("✅ Invoice generated:", publicData.publicUrl);
 
+    // 8️⃣ Send the link as response
     res.json({ publicUrl: publicData.publicUrl });
   } catch (err) {
     console.error("❌ sendInvoiceToWhatsApp error:", err);
-    res.status(500).json({ error: err.message || "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+
+
   }
 };

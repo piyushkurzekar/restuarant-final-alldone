@@ -7,18 +7,25 @@ import { LuBox } from "react-icons/lu";
 import { IoFastFoodOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { getStaff } from "../service/staffApi";
+import { useNavigate } from "react-router-dom";   // ✅ added
 
-const API_STOCKS =
-  "https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/restaurant-stocks";
-const API_ORDERS =
-  "https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/kitchen";
+const API_STOCKS = "http://localhost:4000/api/restaurant-stocks";
+const API_ORDERS = "http://localhost:4000/api/orders/kitchen";
 
 const Dashboard = () => {
+  const navigate = useNavigate(); // ✅ initialize navigation
+
   const [totalStaff, setTotalStaff] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(0);
   const [completedOrders, setCompletedOrders] = useState(0);
 
-  // ✅ Fetch Staff Count
+  // ✅ Logout Function
+  const handleLogout = () => {
+    localStorage.removeItem("loggedIn");
+    navigate("/login");
+  };
+
+  // Fetch Staff Count
   const fetchStaffCount = async () => {
     try {
       const data = await getStaff();
@@ -28,7 +35,7 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Fetch Low Stock Data
+  // Fetch Stock Data
   const fetchStockData = async () => {
     try {
       const res = await fetch(`${API_STOCKS}/all`);
@@ -42,7 +49,7 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Fetch Completed Orders Count
+  // Fetch Completed Orders Count
   const fetchCompletedOrders = async () => {
     try {
       const res = await fetch(API_ORDERS);
@@ -67,8 +74,20 @@ const Dashboard = () => {
 
   return (
     <div className="overviewContainer container">
+
+      {/* ✅ LOGOUT BUTTON (Top Right) */}
+      <div className="d-flex justify-content-end mt-3">
+        <button
+          className="btn btn-danger px-4 py-2"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </div>
+
       <div className="py-4">
         <h2 className="fs-4 fw-500">Quick Actions</h2>
+
         <div className="row g-3 justify-content-center pb-4">
           <CardBasic
             cardTitle={"New Order"}
@@ -93,27 +112,28 @@ const Dashboard = () => {
         <div className="row g-3 justify-content-center pb-4">
           <h2 className="fs-4 fw-500">Overview</h2>
 
-          {/* ✅ Dynamic Total Orders (Completed Orders) */}
+          {/* Total Orders */}
           <Card
             cardTitle={"Total Orders"}
             cardIcon={<IoFastFoodOutline fontSize={20} color="#000000" />}
             cardSubtitle={completedOrders}
           />
 
+          {/* Monthly Revenue */}
           <Card
             cardTitle={"Monthly Revenue"}
             cardIcon={<MdCurrencyRupee fontSize={20} color="#000000" />}
             cardSubtitle={"Rs. 45,231"}
           />
 
-          {/* ✅ Dynamic Total Staff */}
+          {/* Total Staff */}
           <Card
             cardTitle={"Total Staff"}
             cardIcon={<GoPeople fontSize={20} color="#000000" />}
             cardSubtitle={totalStaff}
           />
 
-          {/* ✅ Dynamic Low Stock Alerts with Color Change */}
+          {/* Low Stock Alerts */}
           <Card
             cardTitle={"Low Stock Alerts"}
             cardIcon={<LuBox fontSize={20} color="#000000" />}

@@ -23,7 +23,7 @@ const Cart = () => {
 
   const fetchCartOrders = async () => {
     try {
-      const res = await fetch("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/cart");
+      const res = await fetch("http://localhost:4000/api/orders/cart");
       const data = await res.json();
       setOrders(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -76,7 +76,7 @@ const Cart = () => {
       });
 
     try {
-      const res = await fetch(`https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/confirm/${order.id}`, {
+      const res = await fetch(`http://localhost:4000/api/orders/confirm/${order.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notes: formattedNotes }), // ✅ send with price
@@ -102,7 +102,7 @@ const Cart = () => {
 
     try {
       const res = await fetch(
-        `https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/complete/${selectedOrder.id}`,
+        `http://localhost:4000/api/orders/complete/${selectedOrder.id}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

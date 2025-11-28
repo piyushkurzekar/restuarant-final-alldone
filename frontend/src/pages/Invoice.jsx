@@ -20,7 +20,7 @@ const Invoice = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/${orderId}`);
+        const res = await fetch(`http://localhost:4000/api/orders/${orderId}`);
         const data = await res.json();
         setOrder(data);
       } catch (err) {
@@ -67,7 +67,7 @@ const Invoice = () => {
 
       // 1️⃣ Generate invoice PDF via backend
       const res = await fetch(
-        `https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/send-invoice/${order.id}`,
+        `http://localhost:4000/api/orders/send-invoice/${order.id}`,
         { method: "POST" }
       );
       const data = await res.json();
@@ -87,8 +87,7 @@ const Invoice = () => {
 ━━━━━━━━━━━━━━━━━━━
 🏷️ *Invoice ID:* ${order.id}
 📅 *Date:* ${new Date(order.date || Date.now()).toLocaleDateString("en-IN")}
-💰 *Total Amount:* ₹${finalTotal}
-
+💰 Total Amount: ₹${order.grand_total?.toFixed(2)}
 📎 *Download Invoice (PDF):* ${data.publicUrl}
 
 📍 *Thank you for visiting Shivaam Farms & Resorts!*

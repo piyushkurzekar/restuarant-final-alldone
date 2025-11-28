@@ -21,7 +21,7 @@ const Kitchen = () => {
 
   const fetchKitchenOrders = async () => {
     try {
-      const res = await fetch("https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/orders/kitchen");
+      const res = await fetch("http://localhost:4000/api/orders/kitchen");
       const data = await res.json();
       setOrders(data);
     } catch (err) {

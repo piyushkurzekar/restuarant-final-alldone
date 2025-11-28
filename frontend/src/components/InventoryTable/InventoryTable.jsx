@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_URL = "https://shivaam-farms-and-resorts-restaurant-t95b.onrender.com/api/restaurant-stocks";
+const API_URL = "http://localhost:4000/api/restaurant-stocks";
 
 const InventoryTable = ({ items: propsItems, fetchStocks }) => {
     const [items, setItems] = useState([]);
