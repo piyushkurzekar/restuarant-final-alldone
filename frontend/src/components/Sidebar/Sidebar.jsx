@@ -22,10 +22,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <div
             className={`${styles.sidebar} ${isOpen
                 ? styles.open
-                : ""}`}>
+                : ""}`} >
             <div>
                 <div
-                    className={`${styles.sidebarHeader} d-flex align-items-center justify-content-between mb-4`}>
+                    className={`${styles.sidebarHeader} d-flex align-items-center justify-content-between mb-4 mt-8`}>
                     <h2 className="fs-5 my-0">Restaurant Manager</h2>
                     {/* Mobile close button */}
                     <button className={` ${styles.close} btn btn-sm  z-3`} onClick={toggleSidebar}>

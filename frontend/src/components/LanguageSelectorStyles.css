@@ -1,0 +1,57 @@
+/* Remove top Google translate bar */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner {
+  display: none !important;
+}
+
+body {
+  top: 0px !important;
+}
+
+/* Remove google popup balloon */
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-te-menu-frame,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+/* Remove default dropdown */
+.goog-te-gadget,
+.goog-te-combo {
+  display: none !important;
+}
+
+/* Remove logo & text */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+.mui-select {
+  font-family: Roboto, sans-serif;
+  font-size: 15px;
+  border: 3px solid rgba(0, 0, 0, 0.23);
+  border-radius: 5px;
+  padding: 5px ;
+  background-color: #f8f8f8;
+  color: #000;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  width: 150px;
+  font-weight: 450;
+}
+
+.mui-select:hover {
+  border-color: rgba(0,0,0,0.4);
+}
+
+.mui-select:focus {
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 2px rgba(63,81,181,0.25);
+}
+
+.mui-select option {
+  padding: 10px;
+}
+

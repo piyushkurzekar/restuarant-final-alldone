@@ -21,10 +21,12 @@ import Login from "./pages/Login.jsx";
 
 import Protected from "./Protected.jsx";
 import { OrdersProvider } from "./context/OrdersContext";
+import LanguageSelector from "./components/LanguageSelector";
+
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideLayout = location.pathname === "/login"; // ❗ only login hides layout
+  const hideLayout = location.pathname === "/login";
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -32,8 +34,9 @@ function Layout({ children }) {
   return (
     <>
       {!hideLayout && <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
-      
+
       <div className="main-content">
+
         {!hideLayout && <Navbar toggleSidebar={toggleSidebar} />}
 
         <div className="p-4">{children}</div>
@@ -44,97 +47,28 @@ function Layout({ children }) {
   );
 }
 
+
 const App = () => {
   return (
     <OrdersProvider>
       <Router>
+
+        {/* Language selector 🔥 (load only once) */}
+        <LanguageSelector />
+
         <Layout>
           <Routes>
-
-            {/* Public Route */}
             <Route path="/login" element={<Login />} />
 
-            {/* Protected Routes */}
-            <Route
-              path="/"
-              element={
-                <Protected>
-                  <Dashboard />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/staff"
-              element={
-                <Protected>
-                  <Staff />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/finance"
-              element={
-                <Protected>
-                  <Finance />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/orders"
-              element={
-                <Protected>
-                  <Orders />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/takeorders"
-              element={
-                <Protected>
-                  <TakeOrders />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/invoice/:orderId"
-              element={
-                <Protected>
-                  <Invoice />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/cart"
-              element={
-                <Protected>
-                  <Cart />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/stocks"
-              element={
-                <Protected>
-                  <Stocks />
-                </Protected>
-              }
-            />
-
-            <Route
-              path="/kitchen"
-              element={
-                <Protected>
-                  <Kitchen />
-                </Protected>
-              }
-            />
+            <Route path="/" element={<Protected><Dashboard /></Protected>} />
+            <Route path="/staff" element={<Protected><Staff /></Protected>} />
+            <Route path="/finance" element={<Protected><Finance /></Protected>} />
+            <Route path="/orders" element={<Protected><Orders /></Protected>} />
+            <Route path="/takeorders" element={<Protected><TakeOrders /></Protected>} />
+            <Route path="/invoice/:orderId" element={<Protected><Invoice /></Protected>} />
+            <Route path="/cart" element={<Protected><Cart /></Protected>} />
+            <Route path="/stocks" element={<Protected><Stocks /></Protected>} />
+            <Route path="/kitchen" element={<Protected><Kitchen /></Protected>} />
           </Routes>
         </Layout>
       </Router>

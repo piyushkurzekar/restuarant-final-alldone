@@ -8,6 +8,7 @@ import { IoFastFoodOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { getStaff } from "../service/staffApi";
 import { useNavigate } from "react-router-dom";   // ✅ added
+  
 
 const API_STOCKS = "https://restuarant-final-alldone.onrender.com/api/restaurant-stocks";
 const API_ORDERS = "https://restuarant-final-alldone.onrender.com/api/orders/kitchen";
@@ -73,7 +74,10 @@ const Dashboard = () => {
   }, []);
 
   return (
+    
     <div className="overviewContainer container">
+     
+      
 
       {/* ✅ LOGOUT BUTTON (Top Right) */}
       <div className="d-flex justify-content-end mt-3">

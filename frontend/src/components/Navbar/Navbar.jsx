@@ -3,6 +3,8 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { GoPeople } from "react-icons/go";
 import styles from "./Navbar.module.css";
 import { useNavigate } from "react-router-dom";
+import LanguageSelector from "../LanguageSelector";
+
 
 const Navbar = ({ toggleSidebar }) => {
   const location = useLocation();
@@ -24,7 +26,7 @@ const Navbar = ({ toggleSidebar }) => {
 
   return (
     <nav
-      className={`${styles.navbar} navbar navbar-expand-lg px-3 py-3 border-bottom`}
+      className={`${styles.navbar} navbar navbar-expand-lg px-3 py-3 border-bottom mt-8`}
     >
       <div className="container-fluid d-flex align-items-center">
         {/* Sidebar toggle button - only visible on small screens */}
@@ -38,6 +40,11 @@ const Navbar = ({ toggleSidebar }) => {
         {/* Dynamic Page Title */}
         {/* <span className="navbar-brand fw-bold">{currentTitle}</span> */}
         <img src="..\public\images\logo.png" style={{ height: "45px", marginBottom: "-5px" }} alt="" onClick={() => navigate("/")} />
+
+      {/* 👉 Language Selector here */}
+        <div className="ml-5 mt-2">
+          <LanguageSelector />
+        </div>
 
         {/* Push user info to the right */}
         <div className="ms-auto d-flex align-items-center">
