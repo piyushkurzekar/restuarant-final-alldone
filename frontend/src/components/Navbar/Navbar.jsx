@@ -4,6 +4,7 @@ import { GoPeople } from "react-icons/go";
 import styles from "./Navbar.module.css";
 import { useNavigate } from "react-router-dom";
 import LanguageSelector from "../LanguageSelector";
+import src from "../../../public/images/logo.png"
 
 
 const Navbar = ({ toggleSidebar }) => {
@@ -39,7 +40,7 @@ const Navbar = ({ toggleSidebar }) => {
  
         {/* Dynamic Page Title */}
         {/* <span className="navbar-brand fw-bold">{currentTitle}</span> */}
-        <img src="..\public\images\logo.png" style={{ height: "45px", marginBottom: "-5px" }} alt="" onClick={() => navigate("/")} />
+        <img src={src} style={{ height: "47px", marginBottom: "-5px" }} alt="" onClick={() => navigate("/")} />
 
       {/* 👉 Language Selector here */}
         <div className="ml-5 mt-2">
