@@ -54,8 +54,7 @@ const App = () => {
     <OrdersProvider>
       <Router>
 
-        {/* Language selector 🔥 (load only once) */}
-        <LanguageSelector />
+      
 
         <Layout>
           <Routes>
