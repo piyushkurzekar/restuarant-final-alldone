@@ -22,6 +22,7 @@ import Login from "./pages/Login.jsx";
 import Protected from "./Protected.jsx";
 import { OrdersProvider } from "./context/OrdersContext";
 import LanguageSelector from "./components/LanguageSelector";
+import NotAllowed from "./pages/NotAllowed.jsx"
 
 
 function Layout({ children }) {
@@ -59,17 +60,93 @@ const App = () => {
         <Layout>
           <Routes>
             <Route path="/login" element={<Login />} />
+           <Route path="/not-allowed" element={<NotAllowed />} />
 
-            <Route path="/" element={<Protected><Dashboard /></Protected>} />
-            <Route path="/staff" element={<Protected><Staff /></Protected>} />
-            <Route path="/finance" element={<Protected><Finance /></Protected>} />
-            <Route path="/orders" element={<Protected><Orders /></Protected>} />
-            <Route path="/takeorders" element={<Protected><TakeOrders /></Protected>} />
-            <Route path="/invoice/:orderId" element={<Protected><Invoice /></Protected>} />
-            <Route path="/cart" element={<Protected><Cart /></Protected>} />
-            <Route path="/stocks" element={<Protected><Stocks /></Protected>} />
-            <Route path="/kitchen" element={<Protected><Kitchen /></Protected>} />
+            {/* BOTH admin + staff */}
+            <Route
+              path="/"
+              element={
+                <Protected allowedRoles={["admin", "staff"]}>
+                  <Dashboard />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/orders"
+              element={
+                <Protected allowedRoles={["admin", "staff"]}>
+                  <Orders />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/takeorders"
+              element={
+                <Protected allowedRoles={["admin", "staff"]}>
+                  <TakeOrders />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/invoice/:orderId"
+              element={
+                <Protected allowedRoles={["admin", "staff"]}>
+                  <Invoice />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/kitchen"
+              element={
+                <Protected allowedRoles={["admin", "staff"]}>
+                  <Kitchen />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/cart"
+              element={
+                <Protected allowedRoles={["admin", "staff"]}>
+                  <Cart />
+                </Protected>
+              }
+            />
+
+
+            {/* ONLY ADMIN */}
+            <Route
+              path="/staff"
+              element={
+                <Protected allowedRoles={["admin"]}>
+                  <Staff />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/finance"
+              element={
+                <Protected allowedRoles={["admin"]}>
+                  <Finance />
+                </Protected>
+              }
+            />
+
+            <Route
+              path="/stocks"
+              element={
+                <Protected allowedRoles={["admin"]}>
+                  <Stocks />
+                </Protected>
+              }
+            />
           </Routes>
+
         </Layout>
       </Router>
     </OrdersProvider>

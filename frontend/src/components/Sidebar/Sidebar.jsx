@@ -14,80 +14,93 @@ import { IoFastFoodOutline } from "react-icons/io5";
 import styles from "./Sidebar.module.css";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    const linkClass = ({ isActive }) => `nav-link d-flex align-items-center text-black mb-2 ${isActive
-        ? styles.activeLink
-        : ""}`;
+
+    const role = localStorage.getItem("role");   // ⭐ NEW
+
+    const linkClass = ({ isActive }) =>
+        `nav-link d-flex align-items-center text-black mb-2 ${isActive ? styles.activeLink : ""}`;
 
     return (
-        <div
-            className={`${styles.sidebar} ${isOpen
-                ? styles.open
-                : ""}`} >
+        <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`} >
             <div>
                 <div
                     className={`${styles.sidebarHeader} d-flex align-items-center justify-content-between mb-4 mt-8`}>
                     <h2 className="fs-5 my-0">Restaurant Manager</h2>
-                    {/* Mobile close button */}
                     <button className={` ${styles.close} btn btn-sm  z-3`} onClick={toggleSidebar}>
                         ✖
                     </button>
                 </div>
 
                 <ul className="nav flex-column p-2">
+
+                    {/* Always visible pages */}
                     <li>
                         <NavLink to="/" className={linkClass}>
                             <LuLayoutDashboard className="me-2" />
                             Dashboard
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink to="/staff" className={linkClass}>
-                            <GoPeople className="me-2" />
-                            Staff
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/finance" className={linkClass}>
-                            <MdCurrencyRupee className="me-2" />
-                            Finance
-                        </NavLink>
-                    </li>
+
                     <li>
                         <NavLink to="/orders" className={linkClass}>
                             <IoFastFoodOutline className="me-2" />
                             Orders
                         </NavLink>
                     </li>
+
                     <li>
                         <NavLink to="/takeorders" className={linkClass}>
                             <MdPlaylistAdd className="me-2" />
                             Take Orders
                         </NavLink>
                     </li>
+
                     <li>
-                        <NavLink to="/invoice" className={linkClass}>
+                        <NavLink to="/invoice/123" className={linkClass}>
                             <MdReceipt className="me-2" />
                             Invoice
                         </NavLink>
                     </li>
+
                     <li>
                         <NavLink to="/kitchen" className={linkClass}>
                             <MdDinnerDining className="me-2" />
                             Kitchen
                         </NavLink>
                     </li>
+
                     <li>
                         <NavLink to="/cart" className={linkClass}>
                             <FaShoppingCart className="me-2" />
                             Cart
                         </NavLink>
                     </li>
-                    <li>
-                        <NavLink to="/stocks" className={linkClass}>
-                            <LuBox className="me-2" />
-                            Stocks
-                        </NavLink>
-                    </li>
+
+                    {/* ⭐ ONLY ADMIN */}
+                    {role === "admin" && (
+                        <>
+                            <li>
+                                <NavLink to="/staff" className={linkClass}>
+                                    <GoPeople className="me-2" />
+                                    Staff
+                                </NavLink>
+                            </li>
+
+                            <li>
+                                <NavLink to="/finance" className={linkClass}>
+                                    <MdCurrencyRupee className="me-2" />
+                                    Finance
+                                </NavLink>
+                            </li>
+
+                            <li>
+                                <NavLink to="/stocks" className={linkClass}>
+                                    <LuBox className="me-2" />
+                                    Stocks
+                                </NavLink>
+                            </li>
+                        </>
+                    )}
 
                 </ul>
             </div>
