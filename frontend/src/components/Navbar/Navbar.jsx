@@ -27,7 +27,7 @@ const Navbar = ({ toggleSidebar }) => {
 
   return (
     <nav
-      className={`${styles.navbar} navbar navbar-expand-lg px-3 py-3 border-bottom mt-8`}
+      className={`${styles.navbar} navbar navbar-expand-lg px-3 py-3 border-bottom mt-6`}
     >
       <div className="container-fluid d-flex align-items-center">
         {/* Sidebar toggle button - only visible on small screens */}

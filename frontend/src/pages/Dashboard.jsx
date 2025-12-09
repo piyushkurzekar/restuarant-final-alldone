@@ -7,24 +7,21 @@ import { LuBox } from "react-icons/lu";
 import { IoFastFoodOutline } from "react-icons/io5";
 import toast from "react-hot-toast";
 import { getStaff } from "../service/staffApi";
-import { useNavigate } from "react-router-dom";   // ✅ added
+
+
   
 
 const API_STOCKS = "https://restuarant-final-alldone.onrender.com/api/restaurant-stocks";
 const API_ORDERS = "https://restuarant-final-alldone.onrender.com/api/orders/kitchen";
 
 const Dashboard = () => {
-  const navigate = useNavigate(); // ✅ initialize navigation
+  
 
   const [totalStaff, setTotalStaff] = useState(0);
   const [lowStockCount, setLowStockCount] = useState(0);
   const [completedOrders, setCompletedOrders] = useState(0);
 
-  // ✅ Logout Function
-  const handleLogout = () => {
-    localStorage.removeItem("loggedIn");
-    navigate("/login");
-  };
+ 
 
   // Fetch Staff Count
   const fetchStaffCount = async () => {
@@ -75,19 +72,11 @@ const Dashboard = () => {
 
   return (
     
-    <div className="overviewContainer container">
+    <div className="overviewContainer container mt-4">
      
       
 
-      {/* ✅ LOGOUT BUTTON (Top Right) */}
-      <div className="d-flex justify-content-end mt-3">
-        <button
-          className="btn btn-danger px-4 py-2"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>
-      </div>
+   
 
       <div className="py-4">
         <h2 className="fs-4 fw-500">Quick Actions</h2>

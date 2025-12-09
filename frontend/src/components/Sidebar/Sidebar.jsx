@@ -12,19 +12,28 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaShoppingCart, FaWpforms } from "react-icons/fa";
 import { IoFastFoodOutline } from "react-icons/io5";
 import styles from "./Sidebar.module.css";
+import { useNavigate } from "react-router-dom";   // ✅ added
+
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+    
+    const navigate = useNavigate();   // 👍 move here
 
-    const role = localStorage.getItem("role");   // ⭐ NEW
+    const role = localStorage.getItem("role");
 
     const linkClass = ({ isActive }) =>
         `nav-link d-flex align-items-center text-black mb-2 ${isActive ? styles.activeLink : ""}`;
+
+    const handleLogout = () => {
+        localStorage.removeItem("loggedIn");
+        navigate("/login");
+    };
 
     return (
         <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`} >
             <div>
                 <div
-                    className={`${styles.sidebarHeader} d-flex align-items-center justify-content-between mb-4 mt-8`}>
+                    className={`${styles.sidebarHeader} d-flex align-items-center justify-content-between mb-4 mt-6`}>
                     <h2 className="fs-5 my-0">Restaurant Manager</h2>
                     <button className={` ${styles.close} btn btn-sm  z-3`} onClick={toggleSidebar}>
                         ✖
@@ -101,9 +110,19 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                             </li>
                         </>
                     )}
-
+ 
                 </ul>
+               {/* ✅ LOGOUT BUTTON (Top Right) */}
+                <div className="ml-5">
+                    <button
+                        className="btn btn-danger px-4 py-2"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
+                </div>
             </div>
+            
         </div>
     );
 };

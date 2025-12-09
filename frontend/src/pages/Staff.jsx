@@ -120,7 +120,7 @@ const Staff = () => {
   );
 
   return (
-    <div className="container my-4">
+    <div className="container mt-10">
       <h2>Staff Management</h2>
       <p className="text-muted">Manage your Restaurant staff</p>
 

@@ -69,7 +69,7 @@ const Kitchen = () => {
 
   return (
     <div
-      className="container-fluid py-4"
+      className="container-fluid py-4 mt-4"
       style={{ background: "#f7f7f7", minHeight: "100vh" }}
     >
       <h2 className="fw-semibold mb-4">Kitchen Orders</h2>

@@ -247,7 +247,7 @@ const Finance = () => {
   };
 
   return (
-    <div className="container-fluid mt-4">
+    <div className="container-fluid mt-10">
       {/* === Header === */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-3">
         <div className="mb-2">

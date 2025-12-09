@@ -186,7 +186,7 @@ const TakeOrders = () => {
   }, 0);
 
   return (
-    <div className="container my-2" style={{ maxWidth: "1000px" }}>
+    <div className="container mt-8" style={{ maxWidth: "1000px" }}>
       <div className="card shadow p-4 mb-4">
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">

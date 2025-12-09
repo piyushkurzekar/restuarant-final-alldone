@@ -244,7 +244,7 @@ const Stocks = () => {
 
 
   return (
-    <div className="overviewContainer container">
+    <div className="overviewContainer container mt-8">
 
       <div className="d-flex justify-content-between align-items-center">
         <div className="mt-2">
