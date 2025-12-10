@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";   // ✅ added
 
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-    
+
     const navigate = useNavigate();   // 👍 move here
 
     const role = localStorage.getItem("role");
@@ -34,7 +34,14 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div>
                 <div
                     className={`${styles.sidebarHeader} d-flex align-items-center justify-content-between mb-4 mt-6`}>
-                    <h2 className="fs-5 my-0">Restaurant Manager</h2>
+                    <h2 className="fs-5 my-0">
+                        {role === "admin"
+                            ? "Restaurant Manager"
+                            : role === "staff"
+                                ? "Restaurant Staff"
+                                : role?.charAt(0).toUpperCase() + role?.slice(1)}
+                    </h2>
+
                     <button className={` ${styles.close} btn btn-sm  z-3`} onClick={toggleSidebar}>
                         ✖
                     </button>
@@ -110,9 +117,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                             </li>
                         </>
                     )}
- 
+
                 </ul>
-               {/* ✅ LOGOUT BUTTON (Top Right) */}
+                {/* ✅ LOGOUT BUTTON (Top Right) */}
                 <div className="ml-5">
                     <button
                         className="btn btn-danger px-4 py-2"
@@ -122,7 +129,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     </button>
                 </div>
             </div>
-            
+
         </div>
     );
 };

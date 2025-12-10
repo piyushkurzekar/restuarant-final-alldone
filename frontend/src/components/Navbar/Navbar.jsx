@@ -43,12 +43,12 @@ const Navbar = ({ toggleSidebar }) => {
         <img src={src} style={{ height: "47px", marginBottom: "-5px" }} alt="" onClick={() => navigate("/")} />
 
       {/* 👉 Language Selector here */}
-        <div className="ml-5 mt-2">
+        <div className="">
           <LanguageSelector />
         </div>
 
         {/* Push user info to the right */}
-        <div className="ms-auto d-flex align-items-center">
+        {/* <div className="ms-auto d-flex align-items-center">
           <Link
             className="navbar-brand d-flex align-items-center gap-2 fs-6"
             to="/"
@@ -56,7 +56,7 @@ const Navbar = ({ toggleSidebar }) => {
             <GoPeople />
             User Name
           </Link>
-        </div>
+        </div> */}
       </div>
     </nav>
   );
