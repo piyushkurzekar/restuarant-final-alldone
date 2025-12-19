@@ -3,22 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import MenuItems from "../components/MenuItems/MenuItems";
 import { useOrders } from "../context/OrdersContext";
-
-// Images
-import PohaImg from "../assets/images/Poha.jpeg";
-import BhakkerImg from "../assets/images/Bhakker.jpeg";
-import ChilliPaneer from "../assets/images/Chilli-Paneer.jpeg";
-import Coffee from "../assets/images/Coffee.jpeg";
-import MixVeg from "../assets/images/Mix-Veg.jpeg";
-import MuttonCurry from "../assets/images/Mutton-Curry.jpeg";
-import PalakPaneer from "../assets/images/Palak-paneer.jpeg";
-import ChickenCurry from "../assets/images/Chikken-Curry.jpeg";
-import CrispyVeg from "../assets/images/Crispy-Veg.jpeg";
-import Idli from "../assets/images/Idli.jpeg";
-import Jhunka from "../assets/images/Jhunka.jpeg";
-import PaneerButterMasala from "../assets/images/Paneer-Butter-Masala.jpeg";
-import ButterRoti from "../assets/images/Roti.jpeg";
-import Tea from "../assets/images/Tea.jpeg";
+import { supabase } from "../config/supabaseClient.js";
 
 const TakeOrders = () => {
   const navigate = useNavigate();
@@ -33,45 +18,13 @@ const TakeOrders = () => {
     items: [],
   });
 
+  const [menuItems, setMenuItems] = useState([]);
+  const [editItem, setEditItem] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Dummy waiter list (you can later fetch from Supabase)
-  const waiters = [ "Ramesh", "Suresh", "Amit", "Neha", "Priya"];
-
-  // Timer for date & time
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const categories = [
-    "All",
-    "Hot & Tea",
-    "Chinese",
-    "Main course VEG",
-    "Main course NON VEG",
-    "Snacks",
-    "Paneer",
-    "Roti",
-  ];
-
-  const menuItems = [
-    { id: 1, name: "Tea", price: 15, img: Tea, category: "Hot & Tea" },
-    { id: 2, name: "Chilli Paneer", price: 220, img: ChilliPaneer, category: "Chinese" },
-    { id: 3, name: "Paneer Butter Masala", price: 250, img: PaneerButterMasala, category: "Paneer" },
-    { id: 4, name: "Mix Veg", price: 150, img: MixVeg, category: "Main course VEG" },
-    { id: 5, name: "Chicken Curry", price: 260, img: ChickenCurry, category: "Main course NON VEG" },
-    { id: 6, name: "Poha", price: 40, img: PohaImg, category: "Snacks" },
-    { id: 7, name: "Butter Roti", price: 25, img: ButterRoti, category: "Roti" },
-    { id: 8, name: "Coffee", price: 25, img: Coffee, category: "Hot & Tea" },
-    { id: 9, name: "Crispy Veg", price: 200, img: CrispyVeg, category: "Chinese" },
-    { id: 10, name: "Palak Paneer", price: 230, img: PalakPaneer, category: "Paneer" },
-    { id: 11, name: "Jhunka", price: 150, img: Jhunka, category: "Main course VEG" },
-    { id: 12, name: "Mutton Curry", price: 300, img: MuttonCurry, category: "Main course NON VEG" },
-    { id: 13, name: "Idli", price: 60, img: Idli, category: "Snacks" },
-    { id: 14, name: "Bhakker", price: 40, img: BhakkerImg, category: "Roti" },
-  ];
+  const waiters = ["Ramesh", "Suresh", "Amit", "Neha", "Priya"];
+  const categories = ["All", "Hot & Tea", "Chinese", "Main course Veg", "Main course Non Veg", "Snacks", "Paneer", "Roti"];
 
   // Prefill guest/table if coming from Add More
   useEffect(() => {
@@ -85,6 +38,97 @@ const TakeOrders = () => {
       });
     }
   }, [location.state]);
+
+  // Timer for current time
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Fetch menu items from Supabase
+  useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        const { data, error } = await supabase.from("menu_items").select("*");
+        if (error) {
+          console.error("Failed to fetch menu:", error.message);
+        } else {
+          setMenuItems(data);
+        }
+      } catch (err) {
+        console.error("Network error while fetching menu:", err);
+      }
+    };
+    fetchMenu();
+  }, []);
+
+  // Add new menu item to Supabase & UI
+  const handleAddNewItem = async (newItem) => {
+    try {
+      const { data, error } = await supabase.from("menu_items").insert([newItem]).select();
+      if (error) {
+        console.error("Failed to add item:", error.message);
+        alert("Failed to add item! Check console for error.");
+      } else {
+        setMenuItems(prev => [...prev, data[0]]);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      alert("Failed to add item due to network issue!");
+    }
+  };
+
+  // Edit existing menu item
+  const handleSaveEdit = async (editedItem) => {
+    try {
+      const { data, error } = await supabase
+        .from("menu_items")
+        .update({
+          name: editedItem.name,
+          price: editedItem.price,
+          img: editedItem.img,
+          category: editedItem.category,
+        })
+        .eq("id", editedItem.id)
+        .select(); // returns updated row
+
+      if (error) {
+        console.error("Failed to update item:", error.message);
+        alert("Failed to update item!");
+      } else if (data && data.length > 0) {
+        // Update menuItems in UI
+        setMenuItems(prev =>
+          prev.map(item => (item.id === editedItem.id ? data[0] : item))
+        );
+        setEditItem(null);
+      } else {
+        alert("No data returned from update. Item not saved.");
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      alert("Failed to update item due to network issue!");
+    }
+  };
+
+
+
+  // Delete menu item
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this item?")) return;
+    try {
+      const { error } = await supabase.from("menu_items").delete().eq("id", id);
+      if (error) {
+        console.error("Failed to delete item:", error.message);
+        alert("Failed to delete item!");
+      } else {
+        setMenuItems(prev => prev.filter(i => i.id !== id));
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      alert("Failed to delete item due to network issue!");
+    }
+  };
+
 
   // Send order to backend
   const sendOrderToBackend = async (tableOrder) => {
@@ -114,13 +158,13 @@ const TakeOrders = () => {
     }
   };
 
-  const handleAddToCart = (selectedItems) => {
+  const handleAddToCart = (items) => {
     if (!orderData.guestName || !orderData.tableNumber) {
       alert("Please enter guest name and table number first.");
       return;
     }
 
-    if (!orderData.receiveby || orderData.receiveby === "Select Waiter") {
+    if (!orderData.receiveby) {
       alert("Please select the waiter (Received By)!");
       return;
     }
@@ -130,6 +174,8 @@ const TakeOrders = () => {
       return;
     }
 
+    // ✅ FIX 1: Always convert to array
+    const selectedItems = Array.isArray(items) ? items : [items];
     const tableKey = `Table-${orderData.tableNumber}`;
 
     setCart((prevCart) => {
@@ -153,15 +199,28 @@ const TakeOrders = () => {
         }
       });
 
+
+
+
       const updatedTable = {
         guestName: orderData.guestName,
         tableNumber: orderData.tableNumber,
         contact: orderData.contact,
-        receiveby: orderData.receiveby, // ✅ include waiter name
+        receiveby: orderData.receiveby,
         items: mergedItems,
       };
 
-      sendOrderToBackend(updatedTable);
+      // ✅ BACKEND CALL (IMPORTANT)
+      sendOrderToBackend({
+        ...updatedTable,
+        items: mergedItems.map(item => ({
+          menuId: item.id || null,
+          name: item.name,
+          price: Number(item.price),
+          quantity: item.quantity,
+          total: Number(item.price) * item.quantity,
+        })),
+      });
 
       return {
         ...prevCart,
@@ -175,20 +234,21 @@ const TakeOrders = () => {
         tableNumber: "",
         contact: "",
         receiveby: "",
-        items: [],
       });
     }
   };
+
 
   // Calculate total amount
   const totalAmount = Object.values(cart).reduce((sum, table) => {
     return sum + table.items.reduce((s, item) => s + (item.total || item.price * (item.quantity || 1)), 0);
   }, 0);
 
+
+
   return (
     <div className="container mt-8" style={{ maxWidth: "1000px" }}>
       <div className="card shadow p-4 mb-4">
-        {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="mb-0">Take Orders</h2>
           <button
@@ -199,63 +259,47 @@ const TakeOrders = () => {
           </button>
         </div>
 
-        {/* Guest & Table */}
+        {/* Guest & Table Inputs */}
         <div className="row mb-3 align-items-center">
           <div className="col">
             <input
               type="text"
               className="form-control"
-              style={{ width: "200px" }}
               placeholder="Guest Name"
               value={orderData.guestName}
               onChange={(e) => setOrderData({ ...orderData, guestName: e.target.value })}
             />
           </div>
-
           <div className="col">
             <input
               type="text"
               className="form-control"
-              style={{ width: "120px" }}
               placeholder="Table No."
               value={orderData.tableNumber}
               onChange={(e) => setOrderData({ ...orderData, tableNumber: e.target.value })}
             />
           </div>
-
           <div className="col">
             <input
               type="tel"
               className="form-control"
-              style={{ width: "150px" }}
               placeholder="Contact"
               value={orderData.contact}
               maxLength="10"
-              inputMode="numeric"
-              onInput={(e) => {
-                e.target.value = e.target.value.replace(/[^0-9]/g, "");
-              }}
+              onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ""); }}
               onChange={(e) => setOrderData({ ...orderData, contact: e.target.value })}
             />
           </div>
-
-          {/* ✅ Received By Dropdown */}
           <div className="col">
             <select
               className="form-select"
-              style={{ width: "180px" }}
               value={orderData.receiveby}
               onChange={(e) => setOrderData({ ...orderData, receiveby: e.target.value })}
             >
               <option value="">Select Waiter</option>
-              {waiters.map((w, i) => (
-                <option key={i} value={w}>
-                  {w}
-                </option>
-              ))}
+              {waiters.map((w, i) => <option key={i} value={w}>{w}</option>)}
             </select>
           </div>
-
           <div className="col" style={{ marginTop: "8px" }}>
             <p style={{ fontSize: "14px", marginBottom: 0 }}>
               <strong>Date & Time:</strong> {currentTime.toLocaleString()}
@@ -265,7 +309,7 @@ const TakeOrders = () => {
 
         {/* Category Filter */}
         <div className="mb-3">
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <button
               key={cat}
               className={`btn me-2 mb-2 ${selectedCategory === cat ? "btn-primary" : "btn-outline-primary"}`}
@@ -281,7 +325,12 @@ const TakeOrders = () => {
           menuItems={menuItems}
           selectedCategory={selectedCategory}
           onAddToCart={handleAddToCart}
+          onEdit={handleSaveEdit}      // ✅ use handleSaveEdit here
+          onDelete={handleDelete}
+          onSaveEdit={handleSaveEdit}  // optional, you can keep or remove
+          onAddNewItem={handleAddNewItem}
         />
+
       </div>
     </div>
   );
